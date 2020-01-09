@@ -32,7 +32,7 @@
         @include('admin::form.error')
         <div data-id="{{$id}}" class="btn btn-info pull-left cropper-btn"> @lang('admin::cropper.browse')</div>
         <input id="{{$id}}-file" {!! $attributes !!} data-id="{{$id}}" class="cropper-file" type="file" accept="image/*"/>
-        <img id="{{$id}}-img" {!! $attributes !!} data-id="{{$id}}" class="cropper-img" {!! empty($value) ? '' : 'src="'.old($column, $value).'"'  !!}>
+        <img id="{{$id}}-img" {!! $attributes !!} data-id="{{$id}}" class="cropper-img" {!! empty($value) ? '' : 'src="'.old($column, $preview).'"'  !!}>
         <input id="{{$id}}-input" type="hidden" name="{{$name}}" value="{{ old($column, $value) }}" {!! $attributes !!} />
 
         @include('admin::form.help-block')

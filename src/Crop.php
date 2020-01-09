@@ -108,8 +108,9 @@ class Crop extends File
     {
         $this->name = $this->formatName($this->column);
 
+        $preview = '';
         if (!empty($this->value)) {
-            $this->value = filter_var($this->preview());
+            $preview = filter_var($this->preview());
         }
 
 
@@ -120,7 +121,6 @@ class Crop extends File
 
         $this->script = <<<EOT
 
-//图片类型预存
 var cropperMIME = '';
 
 function getMIME(base64)
@@ -135,16 +135,14 @@ function cropper(imgSrc,id,w,h)
 
     var cropperImg = '<div id="cropping-div"><img id="cropping-img" src="'+imgSrc+'"><\/div>';
 
-
-    //生成弹层模块
     layer.open({
         type: 1,
-        skin: 'layui-layer-demo', //样式类名
+        skin: 'layui-layer-demo',
         area: ['800px', '600px'],
-        closeBtn: 2, //第二种关闭按钮
+        closeBtn: 2,
         anim: 2,
         resize: false,
-        shadeClose: false, //关闭遮罩关闭
+        shadeClose: false,
         title: '$title',
         content: cropperImg,
         btn: ['$crop','$original','$empty'],
@@ -153,31 +151,20 @@ function cropper(imgSrc,id,w,h)
                 width: w,
                 height: h
             });
-            //剪裁数据转换base64
             var base64url = cas.toDataURL(cropperMIME);
-            //替换预览图
             $('#'+id+'-img').attr('src',base64url);
-            //替换提交数据
             $('#'+id+'-input').val(base64url);
-            //销毁剪裁器实例
             cropper.destroy();
             layer.closeAll('page');
         },
         btn2:function(){
-            //默认关闭框
-            //销毁剪裁器实例
             cropper.destroy();
         },
         btn3:function(){
-            //清空表单和选项
-            //销毁剪裁器实例
             cropper.destroy();
             layer.closeAll('page');
-            //清空预览图
             $('#'+id+'-img').removeAttr('src');
-            //清空提交数据
             $('#'+id+'-input').val('');
-            //清空文件选择器
             $('#'+id+'-file').val('');
         }
     });
@@ -194,31 +181,22 @@ $('.cropper-btn').click(function(){
     $('#'+id+'-file').click();
 });
 
-//在input file内容改变的时候触发事件
 $('.cropper-file').change(function(){
     var id = $(this).attr('data-id');
     var w = $(this).attr('data-w');
     var h = $(this).attr('data-h');
 
-    //获取input file的files文件数组;
-    //这边默认只能选一个，但是存放形式仍然是数组，所以取第一个元素使用[0];
     var file = $(this)[0].files[0];
-    //创建用来读取此文件的对象
     var reader = new FileReader();
-    //使用该对象读取file文件
     reader.readAsDataURL(file);
-    //读取文件成功后执行的方法函数
     reader.onload = function(e){
-        //选择所要显示图片的img，要赋值给img的src就是e中target下result里面的base64编码格式的地址
         $('#'+id+'-img').attr('src',e.target.result);
         cropperMIME = getMIME(e.target.result);
-        //调取剪切函数（内部包含了一个弹出框）
         cropper(e.target.result,id,w,h);
         $('#'+id+'-input').val(e.target.result);
     };
 });
 
-//点击图片触发弹层
 $('.cropper-img').click(function(){
     var id = $(this).attr('data-id');
     var w = $(this).attr('data-w');
@@ -234,7 +212,9 @@ EOT;
 
         Admin::script($this->script);
 
-        return view($this->getView(), $this->variables());
+        $variables = $this->variables();
+        $variables['preview'] = $preview;
+        return view($this->getView(), $variables);
     }
 
 }
