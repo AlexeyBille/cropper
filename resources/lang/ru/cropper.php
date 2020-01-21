@@ -3,7 +3,7 @@
 return [
     'cropper' => 'Cropper',
     'crop' => 'Обрезать',
-    'original' => 'Оргиниальная',
+    'original' => 'Оригиниальная',
     'empty' => 'Очистить',
     'browse' => 'Выбрать'
 ];
